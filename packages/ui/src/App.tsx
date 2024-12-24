@@ -1,13 +1,17 @@
 import React from 'react';
+import { Box } from '@mui/material';
+import Sidebar from './components/Sidebar';
 import AppRouter from './routes/AppRouter';
-import { Container } from '@mui/material'; // Example MUI usage
 
 const App: React.FC = () => {
   return (
-    <Container>
-      <h1>My React + TS + MUI App</h1>
-      <AppRouter />
-    </Container>
+    <Box sx={{ display: 'flex' }}>
+      <Sidebar />
+
+      <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+        <AppRouter />
+      </Box>
+    </Box>
   );
 };
 

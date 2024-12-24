@@ -1,17 +1,23 @@
-import * as dotenv from 'dotenv';
-import app from './app';
+import 'reflect-metadata';
+import express from 'express';
 import { AppDataSource } from './config/database';
-
-dotenv.config();
+import { BorrowService } from './services/BorrowService';
+import { UserService } from './services/UserService';
+import { BookService } from './services/BookService';
+import { UserController } from './controllers/UserController';
+import { BookController } from './controllers/BookController';
+import router from './routes';
 
 const PORT = process.env.PORT || 3000;
 
-AppDataSource.initialize()
-    .then(async () => {
-        console.log("Database connection is success");
-    })
-    .catch((e) => console.error(e));
+AppDataSource.initialize().then(() => {
+  console.log('Database is ready.');
 
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-});
+  const app = express();
+  app.use(express.json());
+  app.use(router);
+
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
+}).catch((err) => console.error(err));

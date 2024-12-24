@@ -3,6 +3,7 @@ import { User } from '../entities/User';
 import { Borrow } from '../entities/Borrow';
 import { BorrowService } from './BorrowService';
 import { BookService } from './BookService';
+import { UserShortDTO } from './../entities/DTOs/UserShortDTO';
 
 export class UserService {
   private userRepo = AppDataSource.getRepository(User);
@@ -15,8 +16,10 @@ export class UserService {
   /**
    * List all users
    */
-  async listAllUsers(): Promise<User[]> {
-    return this.userRepo.find();
+  async listAllUsers(): Promise<UserShortDTO[]> {
+    return this.userRepo.find({
+      select: ['id', 'name'],
+    });
   }
 
   /**
@@ -29,20 +32,48 @@ export class UserService {
   }
 
   /**
+   * Find a single user by ID (throw if not found)
+   */
+  async findUserShortByIdOrThrow(userId: number): Promise<UserShortDTO> {
+    const user = await this.userRepo.findOne({
+      where: { id: userId },
+      select: ['id', 'name'],
+    });
+
+    if (!user) throw new Error('User not found');
+    return user;
+  }
+
+  /**
    * Get user detail:
    *   - current borrows
    *   - previous borrows
    */
   async getUserDetail(userId: number) {
-    const user = await this.findUserByIdOrThrow(userId);
+    const user = await this.findUserShortByIdOrThrow(userId);
 
     // all borrows via BorrowService
     const allBorrows = await this.borrowService.findAllBorrowsByUser(user.id);
 
-    const currentBorrows = allBorrows.filter(b => !b.returnedAt);
-    const previousBorrows = allBorrows.filter(b => b.returnedAt);
+    const presentBooks = allBorrows
+    .filter((b) => !b.returnedAt)
+    .map((b) => ({
+      name: b.book.name,
+    }));
 
-    return { user, currentBorrows, previousBorrows };
+    const pastBooks = allBorrows
+    .filter((b) => b.returnedAt)
+    .map((b) => ({
+      name: b.book.name,
+      userScore: b.score,
+    }));
+
+    const books = {
+      past: pastBooks,
+      present: presentBooks,
+    }
+
+    return { user, books };
   }
 
   /**

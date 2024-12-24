@@ -1,5 +1,10 @@
 import { UserService } from './../services/UserService';
 import { Request, Response } from 'express';
+import { plainToInstance } from 'class-transformer';
+import { validate } from 'class-validator';
+import { GetUserDetailRequestDTO } from './../entities/DTOs/GetUserDetailRequestDTO';
+import { BorrowBookRequestDTO } from './../entities/DTOs/BorrowBookRequestDTO';
+import { ReturnBookRequestDTO } from './../entities/DTOs/ReturnBookRequestDTO';
 
 export class UserController {
   private userService: UserService;
@@ -24,8 +29,16 @@ export class UserController {
 
   async getUserDetail(req: Request, res: Response) {
     try {
-      const userId = Number(req.params.userId);
-      const detail = await this.userService.getUserDetail(userId);
+      const dto = plainToInstance(GetUserDetailRequestDTO, { userId: Number(req.params.userId) });
+      const errors = await validate(dto);
+
+      if (errors.length > 0) {
+        const messages = errors.map((err) => Object.values(err.constraints || {}).join(', '));
+        res.status(400).json({ errors: messages });
+        return;
+      }
+
+      const detail = await this.userService.getUserDetail(dto.userId);
       res.status(200).json(detail);
     } catch (err: any) {
       if (err.message === 'User not found') {
@@ -38,10 +51,21 @@ export class UserController {
 
   async returnBook(req: Request, res: Response) {
     try {
-      const userId = Number(req.params.userId);
-      const bookId = Number(req.params.bookId);
-      const { score } = req.body;
-      await this.userService.returnBook(userId, bookId, score);
+      const dto = plainToInstance(ReturnBookRequestDTO, {
+        userId: Number(req.params.userId),
+        bookId: Number(req.params.bookId),
+        score: req.body.score,
+      });
+
+      const errors = await validate(dto);
+
+      if (errors.length > 0) {
+        const messages = errors.map((err) => Object.values(err.constraints || {}).join(', '));
+        res.status(400).json({ errors: messages });
+        return;
+      }
+
+      await this.userService.returnBook(dto.userId, dto.bookId, dto.score);
 
       res.status(200).json({ message: 'Book returned successfully.' });
     } catch (err: any) {
@@ -55,14 +79,20 @@ export class UserController {
 
   async borrowBook(req: Request, res: Response) {
     try {
-      const userId = Number(req.params.userId);
-      const bookId = Number(req.params.bookId);
+      const dto = plainToInstance(BorrowBookRequestDTO, {
+        userId: Number(req.params.userId),
+        bookId: Number(req.params.bookId),
+      });
 
-      if (!userId) {
-        res.status(400).json({ error: 'userId is required' });
+      const errors = await validate(dto);
+
+      if (errors.length > 0) {
+        const messages = errors.map((err) => Object.values(err.constraints || {}).join(', '));
+        res.status(400).json({ errors: messages });
         return;
       }
-      await this.userService.borrowBook(bookId, userId);
+
+      await this.userService.borrowBook(dto.bookId, dto.userId);
       res.status(201).json({ message: 'Book borrowed successfully.' });
     } catch (err: any) {
       if (

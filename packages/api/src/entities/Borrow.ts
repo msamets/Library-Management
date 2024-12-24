@@ -23,14 +23,13 @@ import {
       onDelete: 'CASCADE',
     })
     book: Book;
-
     @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-    borrowedOn: Date;
+    borrowedAt: Date;
 
     @Column({ type: 'timestamp', nullable: true })
-    returnedOn?: Date;
+    returnedAt?: Date;
 
-    // rating from the user for this borrowed item
+    // score from the user for this borrowed item
     @Column({ type: 'float', nullable: true })
-    rating?: number;
+    score?: number;
   }

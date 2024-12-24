@@ -1,16 +1,13 @@
 import { AppDataSource } from '../config/database';
 import { Book } from '../entities/Book';
-import { BorrowService } from './BorrowService';
 
 export class BookService {
   private bookRepo = AppDataSource.getRepository(Book);
 
-  constructor(
-    private borrowService: BorrowService,  // for borrow logic
-  ) {}
-
-  async listAllBooks(): Promise<Book[]> {
-    return this.bookRepo.find();
+  async listAllBooks(): Promise<Partial<Book[]>> {
+    return this.bookRepo.find({
+      select: ['id', 'name'],
+    });
   }
 
   /**
@@ -23,29 +20,19 @@ export class BookService {
   }
 
   /**
-   * Return a single book's details, including:
-   *   - Current active borrower
-   *   - Average score from completed borrows
+   * Return a single book's details
    */
   async getBookDetail(bookId: number) {
     const book = await this.findBookByIdOrThrow(bookId);
 
-    // Check current active borrow
-    const activeBorrow = await this.borrowService.findActiveBorrowForBook(book.id);
-
-    // Get all completed borrows for score calculations
-    const completedBorrows = await this.borrowService.findAllCompletedBorrowsByBook(book.id);
-    let averageScore: number | null = null;
-    if (completedBorrows.length) {
-      const sum = completedBorrows.reduce((acc, b) => acc + (b.score || 0), 0);
-      const count = completedBorrows.filter(b => b.score != null).length;
-      averageScore = count ? sum / count : null;
-    }
-
     return {
-      book,
-      activeBorrow,
-      averageScore,
+      id: book.id,
+      name: book.name,
+      score: book.averageScore ? book.averageScore.toFixed(2) : -1,
     };
+  }
+
+  async updateBook(book: Book): Promise<Book> {
+    return this.bookRepo.save(book);
   }
 }

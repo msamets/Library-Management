@@ -23,6 +23,7 @@ import {
       onDelete: 'CASCADE',
     })
     book: Book;
+
     @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
     borrowedAt: Date;
 

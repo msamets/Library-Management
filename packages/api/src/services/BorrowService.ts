@@ -1,3 +1,4 @@
+import { BookService } from './BookService';
 import { AppDataSource } from '../config/database';
 import { Borrow } from '../entities/Borrow';
 import { Book } from '../entities/Book';
@@ -6,6 +7,10 @@ import { IsNull, Not } from 'typeorm';
 
 export class BorrowService {
   private borrowRepo = AppDataSource.getRepository(Borrow);
+
+  constructor(
+    private bookService: BookService,
+  ) {}
 
   /**
    * Check if a given book has an active Borrow (i.e. not returned).
@@ -60,6 +65,30 @@ export class BorrowService {
     borrow.returnedAt = new Date();
     if (score !== undefined) {
       borrow.score = score;
+    }
+
+    if (score) {
+      const book = await this.bookService.findBookByIdOrThrow(borrow.book.id);
+
+      if (!book.averageScore) {
+        book.averageScore = score;
+      } else {
+        const borrows = await this.borrowRepo.find({
+          where: { book: { id: book.id } },
+          select: ['score'],
+        });
+
+        const allScores = borrows
+          .filter((b) => b.score !== null && b.score !== undefined)
+          .map((b) => b.score) as number[];
+
+        allScores.push(score);
+
+        const totalScore = allScores.reduce((sum, curr) => sum + curr, 0);
+        book.averageScore = totalScore / allScores.length;
+      }
+
+      await this.bookService.updateBook(book);
     }
 
     await this.borrowRepo.save(borrow);

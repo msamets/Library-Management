@@ -7,8 +7,8 @@ import { BookController } from './controllers/BookController';
 
 const router = Router();
 
-const borrowService = new BorrowService();
-const bookService = new BookService(borrowService);
+const bookService = new BookService();
+const borrowService = new BorrowService(bookService);
 const userService = new UserService(borrowService, bookService);
 
 const bookController = new BookController(bookService);

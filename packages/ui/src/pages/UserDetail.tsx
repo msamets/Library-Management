@@ -1,4 +1,3 @@
-// src/pages/UserDetail.tsx
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import {
@@ -8,7 +7,6 @@ import {
     Box,
     Button,
 } from '@mui/material';
-
 import '../assets/styles/UserDetail.scss';
 
 // Mock user data till connection API

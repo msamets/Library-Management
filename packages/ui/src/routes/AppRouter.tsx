@@ -5,6 +5,7 @@ import ExampleComponent from '../components/ExampleComponent';
 import Users from '../pages/Users';
 import Books from '../pages/Books';
 import UserDetail from '../pages/UserDetail';
+import BookDetail from '../pages/BookDetail';
 
 const AppRouter: React.FC = () => {
   return (
@@ -14,6 +15,7 @@ const AppRouter: React.FC = () => {
       <Route path="/users" element={<Users />} />
       <Route path="/books" element={<Books />} />
       <Route path="/users/:userId" element={<UserDetail />} />
+      <Route path="/books/:bookId" element={<BookDetail />} />
     </Routes>
   );
 };

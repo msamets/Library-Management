@@ -46,7 +46,7 @@ const Sidebar: React.FC = () => {
         }}
       >
         <Typography variant="h6" component="div">
-          Library Management System
+          Library Management
         </Typography>
       </Box>
       <Divider />

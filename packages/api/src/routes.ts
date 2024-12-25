@@ -25,4 +25,9 @@ router.post('/users/:userId/borrow/:bookId', userController.borrowBook);     // 
 router.get('/books', bookController.listAllBooks);              // Grid of available books
 router.get('/books/:bookId', bookController.getBookDetail);     // Detail page (book info, current owner, score)
 
+//TODO: create new endpoint for get fullBookDetail that will give these fields in response:
+//- Information related to the book (author, year etc)
+//- Current owner, if there is
+//- The average rating of the book
+
 export default router;

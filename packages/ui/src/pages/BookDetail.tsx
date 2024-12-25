@@ -6,6 +6,9 @@ import {
   Divider,
   Box,
   Button,
+  List,
+  ListItem,
+  ListItemText,
 } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { lendBook } from '../redux/slices/booksSlice';
@@ -94,6 +97,28 @@ const BookDetail: React.FC = () => {
         </Box>
         <Divider />
 
+        <Box className="book-info">
+          <Typography>
+            <span className="label">Author:</span>
+            <span className="value">{book.author}</span>
+          </Typography>
+        </Box>
+        <Divider />
+
+        {/* Conditionally Render Published Year */}
+        {book.publishedYear && (
+          <>
+            <Box className="book-info">
+              <Typography>
+                <span className="label">Published Year:</span>
+                <span className="value">{book.publishedYear}</span>
+              </Typography>
+            </Box>
+            <Divider />
+          </>
+        )}
+
+        {/* Conditionally Render Score */}
         {book.score !== -1 && (
           <>
             <Box className="book-info">
@@ -104,6 +129,36 @@ const BookDetail: React.FC = () => {
             </Box>
             <Divider />
           </>
+        )}
+
+        {/* Display Borrows */}
+        {book.borrows.length > 0 && (
+          <Box className="book-info">
+            <Typography variant="h6">Borrows:</Typography>
+            <List>
+              {book.borrows.map((borrow) => (
+                <ListItem key={borrow.id}>
+                  <ListItemText
+                    primary={`Borrow ID: ${borrow.id}`}
+                    secondary={
+                      <>
+                        <Typography component="span" variant="body2">
+                          Borrowed At: {new Date(borrow.borrowedAt).toLocaleString()}
+                        </Typography>
+                        <br />
+                        <Typography component="span" variant="body2">
+                          Returned At:{' '}
+                          {borrow.returnedAt
+                            ? new Date(borrow.returnedAt).toLocaleString()
+                            : 'Not Returned'}
+                        </Typography>
+                      </>
+                    }
+                  />
+                </ListItem>
+              ))}
+            </List>
+          </Box>
         )}
       </Box>
 

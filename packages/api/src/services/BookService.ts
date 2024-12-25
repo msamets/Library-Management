@@ -32,6 +32,30 @@ export class BookService {
     };
   }
 
+  async getBookDetailWithBorrows(bookId: number) {
+    const book = await this.bookRepo
+      .createQueryBuilder('book')
+      .leftJoinAndSelect('book.borrows', 'borrow')
+      .where('book.id = :id', { id: bookId })
+      .getOne();
+
+    if (!book) throw new Error('Book not found');
+
+
+    return {
+      id: book.id,
+      name: book.name,
+      author: book.author,
+      publishedYear: book.publishedYear,
+      score: book.averageScore ? book.averageScore.toFixed(2) : -1,
+      borrows: book.borrows.map((borrow) => ({
+        id: borrow.id,
+        borrowedAt: borrow.borrowedAt,
+        returnedAt: borrow.returnedAt,
+      })),
+    };
+  }
+
   async updateBook(book: Book): Promise<Book> {
     return this.bookRepo.save(book);
   }

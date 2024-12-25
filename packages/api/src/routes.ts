@@ -15,19 +15,15 @@ const bookController = new BookController(bookService);
 const userController = new UserController(userService);
 
 // -- Users
-router.route('/users').get(userController.listAllUsers);              // Grid of users
-router.get('/users/:userId', userController.getUserDetail);     // Detail page (borrowed/previously borrowed)
-router.post('/users/:userId/return/:bookId', userController.returnBook); // Return a book
-router.post('/users/:userId/borrow/:bookId', userController.borrowBook);     // Borrow book to user
+router.route('/users').get(userController.listAllUsers);
+router.get('/users/:userId', userController.getUserDetail);
+router.post('/users/:userId/return/:bookId', userController.returnBook);
+router.post('/users/:userId/borrow/:bookId', userController.borrowBook);
 
 
 // -- Books
-router.get('/books', bookController.listAllBooks);              // Grid of available books
-router.get('/books/:bookId', bookController.getBookDetail);     // Detail page (book info, current owner, score)
-
-//TODO: create new endpoint for get fullBookDetail that will give these fields in response:
-//- Information related to the book (author, year etc)
-//- Current owner, if there is
-//- The average rating of the book
+router.get('/books', bookController.listAllBooks);
+router.get('/books/:bookId', bookController.getBookDetail);
+router.get('/books/:bookId/detail-with-borrows', bookController.getBookDetailWithBorrows);
 
 export default router;

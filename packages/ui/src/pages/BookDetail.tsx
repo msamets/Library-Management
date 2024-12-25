@@ -6,24 +6,19 @@ import {
   Divider,
   Box,
   Button,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Select,
-  MenuItem,
-  Label,
-  FormControl,
 } from '@mui/material';
+import { useDispatch, useSelector } from 'react-redux';
+import { lendBook } from '../redux/slices/booksSlice';
+import { RootState } from '../redux/store';
+import LendBookModal from '../components/LendBookModal';
 import '../assets/styles/BookDetail.scss';
 
-const mockBookResponse = {
-  id: 2,
-  name: 'I, Robot',
-  score: '5.33',
-};
+interface User {
+  id: number;
+  name: string;
+}
 
-const mockUsers = [
+const mockUsers: User[] = [
   {
     id: 2,
     name: 'Enes Faruk Meniz',
@@ -43,17 +38,19 @@ const mockUsers = [
 ];
 
 const BookDetail: React.FC = () => {
-  const { bookId } = useParams();
-  const [bookData, setBookData] = useState<any | null>(null);
+  const { bookId } = useParams<{ bookId: string }>();
+  const dispatch = useDispatch();
+  const book = useSelector((state: RootState) =>
+    state.books.books.find((b) => b.id === Number(bookId))
+  );
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [selectedUserId, setSelectedUserId] = useState<number | ''>('');
 
-  //TODO: create custom modal component for it and take modal to there and call it in here
   useEffect(() => {
-    setBookData(mockBookResponse);
+    // In a real app, fetch book data based on bookId
+    // For demonstration, assume data is already in Redux store
   }, [bookId]);
 
-  if (!bookData) {
+  if (!book) {
     return <div>Loading...</div>;
   }
 
@@ -63,19 +60,14 @@ const BookDetail: React.FC = () => {
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
-    setSelectedUserId('');
   };
 
-  const handleLendBook = () => {
-    if (selectedUserId !== '') {
-      const selectedUser = mockUsers.find((user) => user.id === selectedUserId);
-
-      console.log(
-        `Book "${bookData.name}" (ID: ${bookData.id}) has been lent to ${selectedUser?.name} (ID: ${selectedUser?.id})`
-      );
-
-      handleCloseModal();
-    }
+  const handleLendBook = (userId: number) => {
+    dispatch(lendBook({ bookId: book.id, userId }));
+    console.log(
+      `Book "${book.name}" (ID: ${book.id}) has been lent to user ID: ${userId}`
+    );
+    handleCloseModal();
   };
 
   return (
@@ -89,7 +81,7 @@ const BookDetail: React.FC = () => {
         <Box className="book-info">
           <Typography>
             <span className="label">ID:</span>
-            <span className="value">{bookData.id}</span>
+            <span className="value">{book.id}</span>
           </Typography>
         </Box>
         <Divider />
@@ -97,17 +89,22 @@ const BookDetail: React.FC = () => {
         <Box className="book-info">
           <Typography>
             <span className="label">Name:</span>
-            <span className="value">{bookData.name}</span>
+            <span className="value">{book.name}</span>
           </Typography>
         </Box>
         <Divider />
 
-        <Box className="book-info">
-          <Typography>
-            <span className="label">Score:</span>
-            <span className="value">{bookData.score}</span>
-          </Typography>
-        </Box>
+        {book.score !== -1 && (
+          <>
+            <Box className="book-info">
+              <Typography>
+                <span className="label">Score:</span>
+                <span className="value">{book.score}</span>
+              </Typography>
+            </Box>
+            <Divider />
+          </>
+        )}
       </Box>
 
       <Box className="lend-button-container">
@@ -120,45 +117,13 @@ const BookDetail: React.FC = () => {
         </Button>
       </Box>
 
-      <Dialog
+      <LendBookModal
         open={isModalOpen}
         onClose={handleCloseModal}
-        className="lend-modal"
-      >
-        <DialogTitle>Select a User to Lend the Book</DialogTitle>
-
-        <DialogContent className="modal-content">
-          <FormControl fullWidth>
-            <Typography variant="h6">User</Typography>
-            <Select
-              value={selectedUserId}
-              displayEmpty
-              onChange={(e) =>
-                setSelectedUserId(e.target.value as number | '')
-              }
-            >
-              {mockUsers.map((user) => (
-                <MenuItem key={user.id} value={user.id}>
-                  {user.name}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        </DialogContent>
-        <DialogActions className="modal-actions">
-          <Button onClick={handleCloseModal} color="secondary">
-            Cancel
-          </Button>
-          <Button
-            onClick={handleLendBook}
-            variant="contained"
-            color="primary"
-            disabled={selectedUserId === ''}
-          >
-            Lend Book
-          </Button>
-        </DialogActions>
-      </Dialog>
+        onLend={handleLendBook}
+        users={mockUsers}
+        bookName={book.name}
+      />
     </Container>
   );
 };

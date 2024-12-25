@@ -1,0 +1,68 @@
+.book-detail-container {
+  margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+
+  .page-title {
+    font-weight: 600;
+    font-size: 1.75rem;
+  }
+
+  .book-detail-card {
+    background-color: #f4f6f8;
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+    .book-info {
+      margin-bottom: 1.5rem;
+
+      .label {
+        font-weight: 600;
+        margin-right: 0.5rem;
+      }
+
+      .value {
+        font-style: italic;
+      }
+    }
+  }
+
+  /* Button Container */
+  .lend-button-container {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 1rem;
+
+    .lend-button {
+      background-color: #1976d2;
+      color: #fff;
+      &:hover {
+        background-color: #1565c0;
+      }
+    }
+  }
+
+  /* Modal Styling */
+  .lend-modal {
+    .modal-content {
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+
+      .modal-header {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+        font-weight: 600;
+      }
+
+      .modal-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 1rem;
+      }
+    }
+  }
+}

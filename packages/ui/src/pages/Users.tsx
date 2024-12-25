@@ -1,4 +1,3 @@
-// src/pages/Users.tsx
 import React from 'react';
 import { Container } from '@mui/material';
 import UserList from '../components/UserList';
@@ -108,7 +107,7 @@ const mockUsers = [
 
 const Users: React.FC = () => {
   return (
-    <Container sx={{ marginTop: 4 }}>
+    <Container  maxWidth="md" sx={{ marginTop: 4 }}>
       <h1>Users</h1>
       <UserList users={mockUsers} />
     </Container>

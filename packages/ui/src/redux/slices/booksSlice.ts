@@ -20,21 +20,33 @@ const initialState: BooksState = {
       "publishedYear": 2000,
       "score": "8.00",
       "borrows": [
-          {
-              "id": 2,
-              "borrowedAt": "2024-12-24T19:23:39.000Z",
-              "returnedAt": "2024-12-24T19:24:32.000Z"
-          },
-          {
-              "id": 3,
-              "borrowedAt": "2024-12-24T19:36:14.000Z",
-              "returnedAt": "2024-12-24T19:36:25.000Z"
-          },
-          {
-              "id": 5,
-              "borrowedAt": "2024-12-25T19:21:33.000Z",
-              "returnedAt": null
-          }
+        {
+            "id": 2,
+            "borrowedAt": "2024-12-24T19:23:39.000Z",
+            "returnedAt": "2024-12-24T19:24:32.000Z",
+            "user": {
+                "id": 1,
+                "name": "Samet"
+            }
+        },
+        {
+            "id": 3,
+            "borrowedAt": "2024-12-24T19:36:14.000Z",
+            "returnedAt": "2024-12-24T19:36:25.000Z",
+            "user": {
+                "id": 2,
+                "name": "samet2"
+            }
+        },
+        {
+            "id": 5,
+            "borrowedAt": "2024-12-25T19:21:33.000Z",
+            "returnedAt": null,
+            "user": {
+                "id": 2,
+                "name": "samet2"
+            }
+        }
       ]
   }
 

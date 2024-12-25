@@ -143,6 +143,10 @@ const BookDetail: React.FC = () => {
                     secondary={
                       <>
                         <Typography component="span" variant="body2">
+                          Borrowed User: {`${borrow.user.name} #${borrow.user.id}`}
+                        </Typography>
+                        <br />
+                        <Typography component="span" variant="body2">
                           Borrowed At: {new Date(borrow.borrowedAt).toLocaleString()}
                         </Typography>
                         <br />

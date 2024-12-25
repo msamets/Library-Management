@@ -36,6 +36,7 @@ export class BookService {
     const book = await this.bookRepo
       .createQueryBuilder('book')
       .leftJoinAndSelect('book.borrows', 'borrow')
+      .leftJoinAndSelect('borrow.user', 'user')
       .where('book.id = :id', { id: bookId })
       .getOne();
 
@@ -52,6 +53,10 @@ export class BookService {
         id: borrow.id,
         borrowedAt: borrow.borrowedAt,
         returnedAt: borrow.returnedAt,
+        user: {
+          id: borrow.user.id,
+          name: borrow.user.name,
+        },
       })),
     };
   }

@@ -1,13 +1,15 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const Dotenv = require('dotenv-webpack');
 
 module.exports = {
   mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
   entry: './src/index.tsx',
   output: {
-    path: path.resolve(__dirname, 'dist'),
+    path: path.resolve(__dirname, 'public'),
     filename: '[name].[contenthash].js',
     clean: true, // cleans the dist folder on each build
+    publicPath: '/', // Ensure proper routing for SPA
   },
   resolve: {
     extensions: ['.js', '.ts', '.tsx', '.json'],
@@ -43,14 +45,15 @@ module.exports = {
       template: './public/index.html', // You will create this file
       filename: 'index.html',
     }),
+    new Dotenv(), // Add Dotenv plugin here
   ],
   devtool: 'source-map',
   devServer: {
     static: {
       directory: path.join(__dirname, 'public'),
     },
-    historyApiFallback: true, // so React Router works
-    port: 3000,
+    historyApiFallback: true,
+    port: 3001,
     open: true,
     hot: true,
   },

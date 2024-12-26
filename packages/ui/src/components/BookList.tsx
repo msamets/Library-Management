@@ -9,6 +9,7 @@ interface Book {
 
 interface BookListProps {
   books: Book[];
+  loading: boolean;
 }
 
 const columns: GridColDef[] = [
@@ -16,7 +17,7 @@ const columns: GridColDef[] = [
   { field: 'name', headerName: 'Name', width: 250 },
 ];
 
-const BookList: React.FC<BookListProps> = ({ books }) => {
+const BookList: React.FC<BookListProps> = ({ books, loading }) => {
     const navigate = useNavigate();
 
     const handleRowClick = (params: GridRowParams) => {
@@ -28,6 +29,7 @@ const BookList: React.FC<BookListProps> = ({ books }) => {
         <DataGrid
             rows={books}
             columns={columns}
+            loading={loading}
             onRowClick={handleRowClick}
             disableRowSelectionOnClick
         />

@@ -6,77 +6,121 @@ import {
   Divider,
   Box,
   Button,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Select,
-  MenuItem,
-  Label,
-  FormControl,
+  List,
+  ListItem,
+  ListItemText,
+  CircularProgress,
+  Snackbar,
+  Alert,
 } from '@mui/material';
+import LendBookModal from '../components/LendBookModal';
+import bookService, { BookDetailWithBorrows } from '../services/bookService';
+import userService, { User } from '../services/userService';
 import '../assets/styles/BookDetail.scss';
 
-const mockBookResponse = {
-  id: 2,
-  name: 'I, Robot',
-  score: '5.33',
-};
-
-const mockUsers = [
-  {
-    id: 2,
-    name: 'Enes Faruk Meniz',
-  },
-  {
-    id: 1,
-    name: 'Eray Aslan',
-  },
-  {
-    id: 4,
-    name: 'Kadir Mutlu',
-  },
-  {
-    id: 3,
-    name: 'Sefa Eren Şahin',
-  },
-];
-
 const BookDetail: React.FC = () => {
-  const { bookId } = useParams();
-  const [bookData, setBookData] = useState<any | null>(null);
+  const { bookId } = useParams<{ bookId: string }>();
+  const [book, setBook] = useState<BookDetailWithBorrows | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [selectedUserId, setSelectedUserId] = useState<number | ''>('');
+  const [users, setUsers] = useState<User[]>([]); // State for users
+  const [snackbar, setSnackbar] = useState<{
+    open: boolean;
+    message: string;
+    severity: 'success' | 'error';
+  }>({ open: false, message: '', severity: 'success' });
 
-  //TODO: create custom modal component for it and take modal to there and call it in here
   useEffect(() => {
-    setBookData(mockBookResponse);
+    const fetchBookDetail = async () => {
+      try {
+        if (bookId) {
+          const detail = await bookService.getBookDetailWithBorrows(Number(bookId));
+          setBook(detail);
+        }
+      } catch (error: any) {
+        console.error('Error fetching book detail:', error);
+        setSnackbar({
+          open: true,
+          message: error.response?.data?.error || 'Failed to fetch book details.',
+          severity: 'error',
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBookDetail();
   }, [bookId]);
 
-  if (!bookData) {
-    return <div>Loading...</div>;
-  }
+  const fetchUsers = async () => {
+    try {
+      const fetchedUsers = await userService.listAllUsers();
+      setUsers(fetchedUsers);
+    } catch (error: any) {
+      console.error('Error fetching users:', error);
+      setSnackbar({
+        open: true,
+        message: error.response?.data?.error || 'Failed to fetch users.',
+        severity: 'error',
+      });
+    }
+  };
 
-  const handleOpenModal = () => {
+  const handleOpenModal = async () => {
+    await fetchUsers(); // Fetch users before opening the modal
     setIsModalOpen(true);
   };
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
-    setSelectedUserId('');
   };
 
-  const handleLendBook = () => {
-    if (selectedUserId !== '') {
-      const selectedUser = mockUsers.find((user) => user.id === selectedUserId);
-
-      console.log(
-        `Book "${bookData.name}" (ID: ${bookData.id}) has been lent to ${selectedUser?.name} (ID: ${selectedUser?.id})`
-      );
-
-      handleCloseModal();
+  const handleLendBook = async (userId: number) => {
+    try {
+      const response = await userService.borrowBook(userId, book.id);
+      setSnackbar({
+        open: true,
+        message: response.message || 'Book successfully lent!',
+        severity: 'success',
+      });
+      // Refresh book details to reflect the new borrow
+      const updatedDetail = await bookService.getBookDetailWithBorrows(book.id);
+      setBook(updatedDetail);
+    } catch (error: any) {
+      console.error('Error lending the book:', error);
+      setSnackbar({
+        open: true,
+        message: error.response?.data?.error || 'Failed to lend the book.',
+        severity: 'error',
+      });
     }
   };
+
+  const handleCloseSnackbar = (
+    event?: React.SyntheticEvent | Event,
+    reason?: string
+  ) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setSnackbar({ ...snackbar, open: false });
+  };
+
+  if (loading) {
+    return (
+      <Container maxWidth="sm" className="book-detail-container">
+        <CircularProgress />
+      </Container>
+    );
+  }
+
+  if (!book) {
+    return (
+      <Container maxWidth="sm" className="book-detail-container">
+        <Typography variant="h6">Book not found.</Typography>
+      </Container>
+    );
+  }
 
   return (
     <Container maxWidth="sm" className="book-detail-container">
@@ -89,7 +133,7 @@ const BookDetail: React.FC = () => {
         <Box className="book-info">
           <Typography>
             <span className="label">ID:</span>
-            <span className="value">{bookData.id}</span>
+            <span className="value">{book.id}</span>
           </Typography>
         </Box>
         <Divider />
@@ -97,68 +141,93 @@ const BookDetail: React.FC = () => {
         <Box className="book-info">
           <Typography>
             <span className="label">Name:</span>
-            <span className="value">{bookData.name}</span>
+            <span className="value">{book.name}</span>
           </Typography>
         </Box>
         <Divider />
 
         <Box className="book-info">
           <Typography>
-            <span className="label">Score:</span>
-            <span className="value">{bookData.score}</span>
+            <span className="label">Author:</span>
+            <span className="value">{book.author}</span>
           </Typography>
         </Box>
+        <Divider />
+
+        {/* Conditionally Render Published Year */}
+        {book.publishedYear && (
+          <Box className="book-info">
+            <Typography>
+              <span className="label">Published Year:</span>
+              <span className="value">{book.publishedYear}</span>
+            </Typography>
+          </Box>
+        )}
+
+        {/* Display Borrows */}
+        {book.borrows.length > 0 && (
+          <Box className="book-info">
+            <Typography variant="h6">Borrows:</Typography>
+            <List>
+              {book.borrows.map((borrow) => (
+                <ListItem key={borrow.id}>
+                  <ListItemText
+                    primary={`Borrow ID: ${borrow.id}`}
+                    secondary={
+                      <>
+                        <Typography component="span" variant="body2">
+                          Borrowed User: {`${borrow.user.name} #${borrow.user.id}`}
+                        </Typography>
+                        <br />
+                        <Typography component="span" variant="body2">
+                          Borrowed At: {new Date(borrow.borrowedAt).toLocaleString()}
+                        </Typography>
+                        <br />
+                        <Typography component="span" variant="body2">
+                          Returned At:{' '}
+                          {borrow.returnedAt
+                            ? new Date(borrow.returnedAt).toLocaleString()
+                            : 'Not Returned'}
+                        </Typography>
+                      </>
+                    }
+                  />
+                </ListItem>
+              ))}
+            </List>
+          </Box>
+        )}
       </Box>
 
-      <Box className="lend-button-container">
-        <Button
-          variant="contained"
-          className="lend-button"
-          onClick={handleOpenModal}
-        >
-          Lend the Book to a User
-        </Button>
-      </Box>
+      {/* Lend Book Button */}
+      <Button
+        variant="contained"
+        onClick={handleOpenModal}
+        disabled={book.borrows.some((borrow) => !borrow.returnedAt)}
+      >
+        Lend the Book to a User
+      </Button>
 
-      <Dialog
+      {/* Lend Book Modal */}
+      <LendBookModal
         open={isModalOpen}
         onClose={handleCloseModal}
-        className="lend-modal"
-      >
-        <DialogTitle>Select a User to Lend the Book</DialogTitle>
+        onLend={handleLendBook}
+        users={users}
+        bookName={book.name}
+      />
 
-        <DialogContent className="modal-content">
-          <FormControl fullWidth>
-            <Typography variant="h6">User</Typography>
-            <Select
-              value={selectedUserId}
-              displayEmpty
-              onChange={(e) =>
-                setSelectedUserId(e.target.value as number | '')
-              }
-            >
-              {mockUsers.map((user) => (
-                <MenuItem key={user.id} value={user.id}>
-                  {user.name}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        </DialogContent>
-        <DialogActions className="modal-actions">
-          <Button onClick={handleCloseModal} color="secondary">
-            Cancel
-          </Button>
-          <Button
-            onClick={handleLendBook}
-            variant="contained"
-            color="primary"
-            disabled={selectedUserId === ''}
-          >
-            Lend Book
-          </Button>
-        </DialogActions>
-      </Dialog>
+      {/* Snackbar for Feedback */}
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={3000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert onClose={handleCloseSnackbar} severity={snackbar.severity}>
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </Container>
   );
 };

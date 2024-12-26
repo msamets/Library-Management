@@ -9,6 +9,7 @@ interface User {
 
 interface UserListProps {
   users: User[];
+  loading: boolean;
 }
 
 const columns: GridColDef[] = [
@@ -16,7 +17,7 @@ const columns: GridColDef[] = [
   { field: 'name', headerName: 'Name', width: 200 },
 ];
 
-const UserList: React.FC<UserListProps> = ({ users }) => {
+const UserList: React.FC<UserListProps> = ({ users, loading }) => {
     const navigate = useNavigate();
 
     const handleRowClick = (params: GridRowParams) => {
@@ -28,6 +29,7 @@ const UserList: React.FC<UserListProps> = ({ users }) => {
         <DataGrid
             rows={users}
             columns={columns}
+            loading={loading}
             onRowClick={handleRowClick}
             disableRowSelectionOnClick
         />

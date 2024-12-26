@@ -15,14 +15,18 @@ This is the frontend application for the Library Management System. It provides 
    ```bash
    cd ui
 3. install dependencies:
+    ```bash
     npm install
 4. Add .env in packages/ui directory
 5. env variables:
+```
 REACT_APP_API_BASE_URL=http://localhost:3000
 NODE_ENV=development
-6. Start the UI "npm start" in packages/ui directory
+```
+6. Start the UI `npm start` in `packages/ui` directory
 
 ### Features
+```
 User Management
 View a list of all users.
 View user details, including borrowed books.
@@ -32,8 +36,10 @@ Book Management
 View a list of all books.
 View book details, including borrow history.
 Lend books to users.
+```
 
 ### Project Structure
+```
 ui/
 ├── public/             # Public assets
 ├── src/
@@ -41,11 +47,14 @@ ui/
 │   ├── pages/          # Page components for routing
 │   ├── services/       # API connection logic
 │   ├── redux/          # Redux configuration
+│   ├── routes/         # Route configuration
+│   ├── services/       # API connections
+│   ├── types/          # Type definitions
 │   └── assets/         # Styles and other static files
 ├── .env                # Environment variables
 ├── webpack.config.js   # Webpack configuration
 └── package.json        # Project metadata and dependencies
-
+```
 
 ### Scripts
 npm start: Start the development server.

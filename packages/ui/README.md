@@ -4,12 +4,12 @@ This is the frontend application for the Library Management System. It provides 
 
 ---
 
-## **Setup Instructions**
+## Setup Instructions
 
-### **1. Prerequisites**
+### 1. Prerequisites
 - Node.js (v20.9.0) lts/iron
 
-### **2. Installation**
+### 2. Installation
 1. Clone the repository.
 2. Navigate to the `ui` directory:
    ```bash

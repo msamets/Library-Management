@@ -19,7 +19,7 @@ const UserDetail: React.FC = () => {
   const [user, setUser] = useState<any | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>('');
-  const [scores, setScores] = useState<{ [key: number]: string }>({}); // To track scores for each book
+  const [scores, setScores] = useState<{ [key: number]: string }>({});
   const [snackbar, setSnackbar] = useState<{
     open: boolean;
     message: string;
@@ -58,7 +58,7 @@ const UserDetail: React.FC = () => {
         severity: 'success',
       });
 
-      await fetchUserDetail(); // Refresh user data
+      await fetchUserDetail();
     } catch (err: any) {
       console.error(`Failed to return book: ${book.name}`, err);
       setSnackbar({
@@ -163,7 +163,6 @@ const UserDetail: React.FC = () => {
         </Box>
       </div>
 
-      {/* Snackbar for feedback */}
       <Snackbar
         open={snackbar.open}
         autoHideDuration={3000}

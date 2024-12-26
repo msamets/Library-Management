@@ -21,7 +21,6 @@ const initialState: BooksState = {
   error: null,
 };
 
-// Async thunk to fetch books
 export const fetchBooks = createAsyncThunk('books/fetchBooks', async () => {
   const books = await bookService.listAllBooks();
   return books;

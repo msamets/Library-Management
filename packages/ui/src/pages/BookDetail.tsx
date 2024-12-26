@@ -67,7 +67,7 @@ const BookDetail: React.FC = () => {
   };
 
   const handleOpenModal = async () => {
-    await fetchUsers(); // Fetch users before opening the modal
+    await fetchUsers();
     setIsModalOpen(true);
   };
 
@@ -83,7 +83,7 @@ const BookDetail: React.FC = () => {
         message: response.message || 'Book successfully lent!',
         severity: 'success',
       });
-      // Refresh book details to reflect the new borrow
+
       const updatedDetail = await bookService.getBookDetailWithBorrows(book.id);
       setBook(updatedDetail);
     } catch (error: any) {
@@ -154,7 +154,6 @@ const BookDetail: React.FC = () => {
         </Box>
         <Divider />
 
-        {/* Conditionally Render Published Year */}
         {book.publishedYear && (
           <Box className="book-info">
             <Typography>
@@ -164,7 +163,6 @@ const BookDetail: React.FC = () => {
           </Box>
         )}
 
-        {/* Display Borrows */}
         {book.borrows.length > 0 && (
           <Box className="book-info">
             <Typography variant="h6">Borrows:</Typography>
@@ -199,7 +197,6 @@ const BookDetail: React.FC = () => {
         )}
       </Box>
 
-      {/* Lend Book Button */}
       <Button
         variant="contained"
         onClick={handleOpenModal}
@@ -208,7 +205,6 @@ const BookDetail: React.FC = () => {
         Lend the Book to a User
       </Button>
 
-      {/* Lend Book Modal */}
       <LendBookModal
         open={isModalOpen}
         onClose={handleCloseModal}
@@ -217,7 +213,6 @@ const BookDetail: React.FC = () => {
         bookName={book.name}
       />
 
-      {/* Snackbar for Feedback */}
       <Snackbar
         open={snackbar.open}
         autoHideDuration={3000}

@@ -1,5 +1,3 @@
-// src/types/Book.ts
-
 export interface Borrow {
     id: number;
     borrowedAt: string;
@@ -21,5 +19,5 @@ export interface Book {
     name: string;
     author: string;
     publishedYear?: number;
-    score: string | number; // As per your API response
+    score: string | number;
   }

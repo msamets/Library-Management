@@ -27,7 +27,6 @@ export class User {
   })
   role: Role;
 
-  // Relationship to Borrow
   @OneToMany(() => Borrow, (borrow) => borrow.user)
   borrows: Borrow[];
 }

@@ -52,7 +52,6 @@ export class UserService {
   async getUserDetail(userId: number) {
     const user = await this.findUserShortByIdOrThrow(userId);
 
-    // all borrows via BorrowService
     const allBorrows = await this.borrowService.findAllBorrowsByUser(user.id);
 
     const presentBooks = allBorrows
@@ -82,16 +81,13 @@ export class UserService {
    * Return a borrowed book
    */
   async returnBook(userId: number, bookId: number, score?: number) {
-    // Ensure user exists
     await this.findUserByIdOrThrow(userId);
 
-    // Check active borrow
     const activeBorrow = await this.borrowService.findActiveBorrowByUser(userId, bookId);
     if (!activeBorrow) {
       throw new Error('Active borrow record not found for user/book');
     }
 
-    // Mark as returned
     await this.borrowService.returnBorrow(activeBorrow, score);
   }
 
@@ -102,19 +98,15 @@ export class UserService {
    * - Create new Borrow record
    */
   async borrowBook(bookId: number, userId: number) {
-    // 1. Find the book (throw if not found)
     const book = await this.bookService.findBookByIdOrThrow(bookId);
 
-    // 2. Check if it's already borrowed
     const activeBorrow = await this.borrowService.findActiveBorrowForBook(bookId);
     if (activeBorrow) {
       throw new Error('Book is already borrowed');
     }
 
-    // 3. Ensure user is valid
     const user = await this.findUserByIdOrThrow(userId);
 
-    // 4. Create Borrow
     await this.borrowService.createBorrow(user, book);
   }
 }

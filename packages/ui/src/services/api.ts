@@ -14,15 +14,11 @@ const api = axios.create({
 api.interceptors.response.use(
     (response) => response,
     (error) => {
-      // Handle errors globally
       if (error.response) {
-        // Server responded with a status other than 2xx
         toast.error(error.response.data.error || 'An error occurred.');
       } else if (error.request) {
-        // No response received from server
         toast.error('No response from server.');
       } else {
-        // Error setting up the request
         toast.error('Error setting up request.');
       }
       return Promise.reject(error);

@@ -1,0 +1,57 @@
+.user-detail-container {
+    margin-top: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+
+    .page-title {
+      font-weight: 600;
+      font-size: 1.75rem;
+    }
+
+    .user-detail-card {
+      background-color: #f4f6f8;
+      border-radius: 8px;
+      padding: 1.5rem;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+      .user-info {
+        margin-bottom: 1.5rem;
+
+        .label {
+          font-weight: 600;
+          margin-right: 0.5rem;
+        }
+        .value {
+          font-style: italic;
+        }
+      }
+
+      .books-section {
+        margin-top: 1rem;
+
+        .section-title {
+          font-weight: 600;
+          margin-bottom: 0.5rem;
+        }
+
+        .book-item {
+          background-color: #fff;
+          border-radius: 4px;
+          padding: 0.5rem 1rem;
+          margin-bottom: 0.5rem;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+
+          .book-name {
+            font-weight: 500;
+          }
+          .book-score {
+            color: #666;
+            font-size: 0.85rem;
+          }
+        }
+      }
+    }
+  }

@@ -58,12 +58,14 @@ export class UserService {
     const presentBooks = allBorrows
     .filter((b) => !b.returnedAt)
     .map((b) => ({
+      id: b.book.id,
       name: b.book.name,
     }));
 
     const pastBooks = allBorrows
     .filter((b) => b.returnedAt)
     .map((b) => ({
+      id: b.book.id,
       name: b.book.name,
       userScore: b.score,
     }));
@@ -73,7 +75,7 @@ export class UserService {
       present: presentBooks,
     }
 
-    return { user, books };
+    return { ...user, books };
   }
 
   /**

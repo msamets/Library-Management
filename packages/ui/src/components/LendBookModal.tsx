@@ -1,3 +1,5 @@
+// src/components/LendBookModal.tsx
+
 import React, { useState } from 'react';
 import {
   Dialog,
@@ -9,18 +11,13 @@ import {
   MenuItem,
   InputLabel,
   FormControl,
+  Typography,
 } from '@mui/material';
-import '../assets/styles/LendBookModal.scss';
-
-interface User {
-  id: number;
-  name: string;
-}
+import { User } from '../services/userService';
 
 interface LendBookModalProps {
   open: boolean;
   onClose: () => void;
-  onLend: (userId: number) => void;
   users: User[];
   bookName: string;
 }
@@ -47,26 +44,30 @@ const LendBookModal: React.FC<LendBookModalProps> = ({
   };
 
   return (
-    <Dialog open={open} onClose={handleClose} className="lend-book-modal">
-      <DialogTitle>Select a User to Lend the Book</DialogTitle>
-      <DialogContent className="modal-content">
-        <FormControl fullWidth>
-          <InputLabel id="select-user-label">User</InputLabel>
-          <Select
-            labelId="select-user-label"
-            value={selectedUserId}
-            label="User"
-            onChange={(e) => setSelectedUserId(e.target.value as number | '')}
-          >
-            {users.map((user) => (
-              <MenuItem key={user.id} value={user.id}>
-                {user.name}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+    <Dialog open={open} onClose={handleClose} aria-labelledby="lend-book-dialog">
+      <DialogTitle id="lend-book-dialog">Lend "{bookName}" to a User</DialogTitle>
+      <DialogContent>
+        {users.length === 0 ? (
+          <Typography>No users available to lend the book.</Typography>
+        ) : (
+          <FormControl fullWidth>
+            <InputLabel id="select-user-label">Select User</InputLabel>
+            <Select
+              labelId="select-user-label"
+              value={selectedUserId}
+              label="Select User"
+              onChange={(e) => setSelectedUserId(e.target.value as number | '')}
+            >
+              {users.map((user) => (
+                <MenuItem key={user.id} value={user.id}>
+                  {user.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        )}
       </DialogContent>
-      <DialogActions className="modal-actions">
+      <DialogActions>
         <Button onClick={handleClose} color="secondary">
           Cancel
         </Button>

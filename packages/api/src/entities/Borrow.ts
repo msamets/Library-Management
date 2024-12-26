@@ -12,13 +12,11 @@ import {
     @PrimaryGeneratedColumn()
     id: number;
 
-    // Relationship to User
     @ManyToOne(() => User, (user) => user.borrows, {
       onDelete: 'CASCADE',
     })
     user: User;
 
-    // Relationship to Book
     @ManyToOne(() => Book, (book) => book.borrows, {
       onDelete: 'CASCADE',
     })
@@ -30,7 +28,6 @@ import {
     @Column({ type: 'timestamp', nullable: true })
     returnedAt?: Date;
 
-    // score from the user for this borrowed item
     @Column({ type: 'float', nullable: true })
     score?: number;
   }

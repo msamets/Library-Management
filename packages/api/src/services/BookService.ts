@@ -32,6 +32,9 @@ export class BookService {
     };
   }
 
+  /**
+   * Return a single book detail's with borrows
+   */
   async getBookDetailWithBorrows(bookId: number) {
     const book = await this.bookRepo
       .createQueryBuilder('book')
@@ -61,6 +64,9 @@ export class BookService {
     };
   }
 
+  /**
+   * Update book
+   */
   async updateBook(book: Book): Promise<Book> {
     return this.bookRepo.save(book);
   }

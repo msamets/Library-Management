@@ -15,11 +15,9 @@ export class Book {
   @Column({ type: 'int', nullable: true })
   publishedYear?: number;
 
-  // If storing average score in DB (vs calculating on the fly)
   @Column({ type: 'float', nullable: true })
   averageScore?: number;
 
-  // Relationship to Borrow
   @OneToMany(() => Borrow, (borrow) => borrow.book)
   borrows: Borrow[];
 }

@@ -17,10 +17,22 @@ This is the backend service for the Library Management System. It handles user m
    cd api
 3. install dependencies:
     npm install
-4. Create DB with using library_db_setup.sql OR you can run migrations
-5. Insert mock users and books data with using insert_books.sql and insert_users.sql
-6. Add .env in `packages/api` directory
-7. env variables:
+4. Pull and run mysql version 8 container:
+```
+docker pull mysql:8.0
+docker run -d \
+  --name library-mysql \
+  -p 3306:3306 \
+  -e MYSQL_ROOT_PASSWORD=root \
+  -e MYSQL_DATABASE=library_db \
+  -e MYSQL_USER=user \
+  -e MYSQL_PASSWORD=root \
+  mysql:8.0
+```
+5. Create DB with using library_db_setup.sql OR you can run migrations
+6. Insert mock users and books data with using insert_books.sql and insert_users.sql
+7. Add .env in `packages/api` directory
+8. env variables:
 ```
 PORT=3000
 DB_HOST="127.0.0.1"
@@ -29,7 +41,7 @@ DB_USERNAME="user"
 DB_PASSWORD="root"
 DB_DATABASE=library_db
 ```
-8. Start the Server `yarn dev` in `packages/api` directory
+9. Start the Server `yarn dev` in `packages/api` directory
 
 ### API Endpoints
 ```

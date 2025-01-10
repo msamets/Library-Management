@@ -1,0 +1,41 @@
+name: API Build
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - 'packages/api/**'
+      - '.github/workflows/api-build.yml'
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - 'packages/api/**'
+      - '.github/workflows/api-build.yml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Checkout the repository
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      # 2. Set up Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20.9
+          cache: 'yarn'
+
+      # 3. Install dependencies for the API
+      - name: Install dependencies
+        run: |
+          cd packages/api
+          npm install
+
+      # 4. Build API
+      - name: Build API
+        run: |
+          cd packages/api
+          npm run build

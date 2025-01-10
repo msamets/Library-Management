@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box } from '@mui/material';
-import Sidebar from './components/Sidebar';
+import Sidebar from './components/SideBar';
 import AppRouter from './routes/AppRouter';
 
 const App: React.FC = () => {

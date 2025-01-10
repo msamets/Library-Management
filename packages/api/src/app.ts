@@ -1,4 +1,4 @@
-import express, { Express } from 'express';
+import express, { Express, Request, Response } from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 
@@ -17,12 +17,9 @@ app.options('*', cors(corsOptions));
 
 app.use(bodyParser.json());
 
-app.use(router);
-
-app.get('/hello-world', (req, res, next) => {
-    return res.status(200).json({
-        message: 'Hello World',
-    })
+app.get('/hello-world', (req: Request, res: Response) => {
+    res.status(200).json({ message: 'Hello World' });
 });
+
 
 export default app;

@@ -1,0 +1,59 @@
+version: '3.7'
+
+services:
+  ui:
+    build: ./packages/ui
+    depends_on:
+      - api
+      - mysql_db
+    restart: always
+    ports:
+      - "3001:3001"
+    networks:
+      - library_network
+  api:
+    build: ./packages/api
+    depends_on:
+      mysql_db:
+        condition: service_healthy
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      - DB_HOST=mysql_db
+      - DB_PORT=3306
+      - DB_NAME=library_db
+      - DB_USERNAME=user
+      - DB_PASSWORD=root
+      - PORT=3000
+    networks:
+      - library_network
+  mysql_db:
+    image: mysql:8.0
+    restart: always
+    volumes:
+      - library_db_volume:/var/lib/mysql
+    environment:
+      MYSQL_DATABASE: library_db
+      MYSQL_USER: user
+      MYSQL_PASSWORD: root
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - '3306:3306'
+    networks:
+      - library_network
+    healthcheck:
+      test: [
+        "CMD-SHELL",
+        "mysqladmin ping -h 127.0.0.1 -u root -proot || exit 1"
+      ]
+      retries: 10
+      interval: 3s
+      timeout: 30s
+
+volumes:
+  library_db_volume:
+
+networks:
+  library_network:
+    driver: bridge
